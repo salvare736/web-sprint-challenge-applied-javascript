@@ -1,3 +1,5 @@
+import axios from "axios";
+
 const Card = (article) => {
   // TASK 5
   // ---------------------
@@ -17,6 +19,33 @@ const Card = (article) => {
   //   </div>
   // </div>
   //
+  const cardMain = document.createElement('div');
+  const cardHeadline = document.createElement('div');
+  const cardAuthor = document.createElement('div');
+  const cardImgContainer = document.createElement('div');
+  const cardImg = document.createElement('img');
+  const cardBy = document.createElement('span');
+
+  cardMain.appendChild(cardHeadline);
+  cardMain.appendChild(cardAuthor);
+  cardAuthor.appendChild(cardImgContainer);
+  cardAuthor.appendChild(cardBy);
+  cardImgContainer.appendChild(cardImg);
+
+  cardMain.classList.add('card');
+  cardHeadline.classList.add('headline');
+  cardAuthor.classList.add('author');
+  cardImgContainer.classList.add('img-container');
+
+  cardHeadline.textContent = article.headline;
+  cardImg.src = article.authorPhoto;
+  cardBy.textContent = `By ${article.authorName}`;
+
+  cardMain.addEventListener('click', event => {
+    console.log(article.headline);
+  });
+
+  return cardMain;
 }
 
 const cardAppender = (selector) => {
@@ -28,6 +57,38 @@ const cardAppender = (selector) => {
   // Create a card from each and every article object in the response, using the Card component.
   // Append each card to the element in the DOM that matches the selector passed to the function.
   //
+  const attachPoint = document.querySelector(selector);
+  
+  axios
+    .get("https://lambda-times-api.herokuapp.com/articles")
+    .then(res => {
+      res.data.articles.bootstrap.forEach(obj =>{
+        let cardResult = Card(obj);
+        attachPoint.appendChild(cardResult);
+      });
+      res.data.articles.javascript.forEach(obj =>{
+        let cardResult = Card(obj);
+        attachPoint.appendChild(cardResult);
+      });
+      res.data.articles.jquery.forEach(obj =>{
+        let cardResult = Card(obj);
+        attachPoint.appendChild(cardResult);
+      });
+      res.data.articles.node.forEach(obj =>{
+        let cardResult = Card(obj);
+        attachPoint.appendChild(cardResult);
+      });
+      res.data.articles.technology.forEach(obj =>{
+        let cardResult = Card(obj);
+        attachPoint.appendChild(cardResult);
+      });
+    })
+    .catch(err => {
+      debugger;
+    })
+    .finally(() => {
+      // console.log('Done!');
+    });
 }
 
 export { Card, cardAppender }
